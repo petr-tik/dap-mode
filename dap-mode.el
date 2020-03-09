@@ -894,7 +894,7 @@ ADAPTER-ID the id of the adapter."
     (json-encode (json-read-from-string msg))))
 
 (defun dap--send-message (message callback debug-session)
-  "MESSAGE DEBUG-SESSION CALLBACK."
+  "MESSAGE CALLBACK DEBUG-SESSION."
   (if (dap--session-running debug-session)
       (let* ((request-id (cl-incf (dap--debug-session-last-id debug-session)))
              (message (plist-put message :seq request-id)))
@@ -1480,14 +1480,16 @@ If the current session it will be terminated."
 
   (dap--set-sessions ())
   (dap--switch-to-session nil)
-  (dap--refresh-breakpoints))
+  (dap--refresh-breakpoints)
+  (message "Deleted all debugging sessions"))
 
 (defun dap-breakpoint-delete-all ()
   "Delete all breakpoints."
   (interactive)
   (maphash (lambda (file-name _)
              (dap--breakpoints-changed nil file-name))
-           (dap--get-breakpoints)))
+           (dap--get-breakpoints))
+  (message "Deleted all breakpoints"))
 
 (defun dap--buffer-killed ()
   "Buffer killed handler."
